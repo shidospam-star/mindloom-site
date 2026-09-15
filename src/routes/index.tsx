@@ -5,7 +5,7 @@ import { CtaBand } from "@/components/site-shell";
 import { pageMeta, projects, services, testimonials } from "@/lib/agency";
 
 export const Route = createFileRoute("/")({
-  head: () => pageMeta("Custom websites for bold small businesses", "Onda Studio designs and builds distinctive, high-performing websites for ambitious small businesses.", "/"),
+  head: () => pageMeta("MindLoom", "MindLoom designs and builds distinctive, high-performing websites for ambitious small businesses.", "/"),
   component: HomePage,
 });
 

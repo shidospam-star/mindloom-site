@@ -29,9 +29,9 @@ export const testimonials = [
 
 export const pageMeta = (title: string, description: string, path: string) => ({
   meta: [
-    { title: `${title} — Onda Studio` },
+    { title: `${title} — MindLoom` },
     { name: "description", content: description },
-    { property: "og:title", content: `${title} — Onda Studio` },
+    { property: "og:title", content: `${title} — MindLoom` },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: path },
