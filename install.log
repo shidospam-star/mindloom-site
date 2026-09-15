@@ -1,0 +1,8 @@
+npm error code ENOENT
+npm error syscall open
+npm error path C:\Users\3arav\Downloads\Portfolio---Website-agency-main\package.json
+npm error errno -4058
+npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'C:\Users\3arav\Downloads\Portfolio---Website-agency-main\package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\3arav\AppData\Local\npm-cache\_logs\2026-09-15T19_42_10_629Z-debug-0.log
