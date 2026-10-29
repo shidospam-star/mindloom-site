@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/lib/brand";
 import { serviceGroups } from "@/lib/services";
@@ -68,43 +68,98 @@ function ServiceLinks({ onClick }: { onClick?: () => void }) {
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!servicesOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (event.target instanceof Node && !servicesDropdownRef.current?.contains(event.target)) {
+        setServicesOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setServicesOpen(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [servicesOpen]);
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur-xl">
       <div className="mx-auto flex min-h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-5 sm:px-8">
         <Brand />
         <nav className="hidden items-center gap-5 xl:flex" aria-label="Main navigation">
-          <Link to="/" activeOptions={{ exact: true }} className="nav-link text-sm font-medium">
+          <Link
+            to="/"
+            activeOptions={{ exact: true }}
+            onClick={() => setServicesOpen(false)}
+            className="nav-link text-sm font-medium"
+          >
             Home
           </Link>
-          <details className="group relative">
-            <summary className="nav-link flex cursor-pointer list-none items-center gap-1 py-2 text-sm font-medium [&::-webkit-details-marker]:hidden">
-              Services <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="absolute left-1/2 top-full z-50 mt-3 grid w-[38rem] -translate-x-1/2 gap-4 rounded-lg border border-border bg-background p-4 shadow-xl">
-              <Link
-                to="/services"
-                className="rounded-md px-3 py-2 text-sm font-semibold text-primary hover:bg-secondary"
+          <div className="relative" ref={servicesDropdownRef}>
+            <button
+              type="button"
+              className="nav-link flex cursor-pointer items-center gap-1 py-2 text-sm font-medium"
+              aria-haspopup="true"
+              aria-expanded={servicesOpen}
+              aria-controls="desktop-services-menu"
+              onClick={() => setServicesOpen((current) => !current)}
+            >
+              Services{" "}
+              <ChevronDown
+                className={`size-4 transition-transform ${servicesOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {servicesOpen && (
+              <div
+                id="desktop-services-menu"
+                className="absolute left-1/2 top-full z-50 mt-3 grid w-[38rem] -translate-x-1/2 gap-4 rounded-lg border border-border bg-background p-4 shadow-xl"
               >
-                All services
-              </Link>
-              <div className="grid grid-cols-3 gap-3">
-                <ServiceLinks />
+                <Link
+                  to="/services"
+                  onClick={() => setServicesOpen(false)}
+                  className="rounded-md px-3 py-2 text-sm font-semibold text-primary hover:bg-secondary"
+                >
+                  All services
+                </Link>
+                <div className="grid grid-cols-3 gap-3">
+                  <ServiceLinks onClick={() => setServicesOpen(false)} />
+                </div>
               </div>
-            </div>
-          </details>
+            )}
+          </div>
           {companyLinks.map(([label, to]) => (
-            <Link key={to} to={to} className="nav-link text-sm font-medium">
+            <Link
+              key={to}
+              to={to}
+              onClick={() => setServicesOpen(false)}
+              className="nav-link text-sm font-medium"
+            >
               {label}
             </Link>
           ))}
-          <Link to="/contact" search={{ package: "" }} className="nav-link text-sm font-medium">
+          <Link
+            to="/contact"
+            search={{ package: "" }}
+            onClick={() => setServicesOpen(false)}
+            className="nav-link text-sm font-medium"
+          >
             Contact
           </Link>
         </nav>
         <div className="hidden xl:block">
-          <Button asChild>
-            <Link to="/contact" search={{ package: "" }}>
-              Get a Free Quote <ArrowUpRight />
+          <Button asChild className="site-header-cta">
+            <Link to="/contact" search={{ package: "" }} onClick={() => setServicesOpen(false)}>
+              Start a Project <ArrowUpRight />
             </Link>
           </Button>
         </div>
@@ -174,7 +229,7 @@ export function SiteHeader() {
               onClick={() => setOpen(false)}
               className="mt-3 flex items-center justify-between rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
             >
-              Get a Free Quote <ArrowUpRight />
+              Start a Project <ArrowUpRight />
             </Link>
           </div>
         </nav>
@@ -285,7 +340,7 @@ export function PageIntro({
 
 export function CtaBand() {
   return (
-    <section className="bg-ink text-ink-foreground">
+    <section className="home-cta-band text-ink-foreground">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-16 sm:px-8 md:grid-cols-[1fr_auto] md:items-end lg:py-24">
         <div>
           <p className="eyebrow text-blue-300">{brand.name}</p>
@@ -293,9 +348,9 @@ export function CtaBand() {
             Have an idea? Let&apos;s make it real.
           </h2>
         </div>
-        <Button asChild size="lg">
+        <Button asChild size="lg" className="home-primary-button">
           <Link to="/contact" search={{ package: "" }}>
-            Get a Free Quote <ArrowUpRight />
+            Let&apos;s build something <ArrowUpRight />
           </Link>
         </Button>
       </div>
